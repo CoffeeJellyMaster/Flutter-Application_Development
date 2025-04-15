@@ -1,0 +1,1 @@
+exercises/exercise_8/lib/firebase_options.dart

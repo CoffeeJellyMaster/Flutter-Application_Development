@@ -1,0 +1,11 @@
+create me a flutter app that is an expense tracker, the app will have two screens. 
+1.expenses_list.dart where the expenses will be displayed as a seemless button, and can also add, update and delete an expense (deleting the expense via a thrash button on the left of the seemless button widget when displayed), the button will display the Name of the expenses from the expenses_form.dart .
+2. expenses_form.dart, this allows me to create an expenses with the fields
+Name :
+Description:
+Select Category (is a drop down menu) with values : ["Bills", "Transportation", "Food", "Utilities", "Health", "Entertainment", "Miscellaneous"]
+Amount (int) :
+then a button below that allows me to store the created expense, after creating the expense, it should be displayed in expenses_list.dart
+3.edit_expense.dart, where upon clicking the expenses listed, I will be able to edit the forms.
+
+return to me the 3 dart file, and give me my main.dart file that routes to expenses_list.dart

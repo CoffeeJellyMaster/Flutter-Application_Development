@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "163893428970",
+    "project_id": "cmsc23-exercise-8-816c2",
+    "storage_bucket": "cmsc23-exercise-8-816c2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:163893428970:android:488954d704243157be0d93",
+        "android_client_info": {
+          "package_name": "com.example.exercise_8"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBjElLThtZz8GNir2DcTlAZZ0wKdcaWwk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
