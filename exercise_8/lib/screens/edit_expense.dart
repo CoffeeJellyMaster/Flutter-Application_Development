@@ -1,5 +1,9 @@
+
+
 import 'package:flutter/material.dart';
-import 'expenses_list.dart';
+import 'package:provider/provider.dart';
+import '../models/expense_model.dart';
+import '../providers/expense_provider.dart';
 
 class EditExpense extends StatefulWidget {
   final Expense expense;
@@ -28,12 +32,17 @@ class _EditExpenseState extends State<EditExpense> {
   void _saveEditedExpense() {
     if (_formKey.currentState!.validate()) {
       final updatedExpense = Expense(
+        id: widget.expense.id,
         name: _nameController.text,
         description: _descriptionController.text,
         category: _selectedCategory,
         amount: int.parse(_amountController.text),
       );
-      Navigator.pop(context, updatedExpense);
+
+      Provider.of<ExpenseListProvider>(context, listen: false)
+          .editExpense(widget.expense.id!, updatedExpense);
+
+      Navigator.pop(context);
     }
   }
 

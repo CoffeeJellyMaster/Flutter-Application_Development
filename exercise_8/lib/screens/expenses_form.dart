@@ -1,7 +1,11 @@
 
+
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'expenses_list.dart';
+import 'package:provider/provider.dart';
+import '../models/expense_model.dart';
+import '../providers/expense_provider.dart';
 
 class ExpensesForm extends StatefulWidget {
   const ExpensesForm({super.key});
@@ -19,13 +23,16 @@ class _ExpensesFormState extends State<ExpensesForm> {
 
   void _saveExpense() {
     if (_formKey.currentState!.validate()) {
-      final expense = Expense(
+      final newExpense = Expense(
         name: _nameController.text,
         description: _descriptionController.text,
         category: _selectedCategory,
         amount: int.parse(_amountController.text),
       );
-      Navigator.pop(context, expense);
+
+      Provider.of<ExpenseListProvider>(context, listen: false).addExpense(newExpense);
+
+      Navigator.pop(context);
     }
   }
 
@@ -42,8 +49,7 @@ class _ExpensesFormState extends State<ExpensesForm> {
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(labelText: 'Name'),
-                validator: (value) =>
-                    value!.isEmpty ? 'Enter a name' : null,
+                validator: (value) => value!.isEmpty ? 'Enter a name' : null,
               ),
               TextFormField(
                 controller: _descriptionController,
@@ -51,38 +57,22 @@ class _ExpensesFormState extends State<ExpensesForm> {
               ),
               DropdownButtonFormField<String>(
                 value: _selectedCategory,
-                decoration:
-                    const InputDecoration(labelText: 'Select Category'),
+                decoration: const InputDecoration(labelText: 'Select Category'),
                 items: [
-                  "Bills",
-                  "Transportation",
-                  "Food",
-                  "Utilities",
-                  "Health",
-                  "Entertainment",
-                  "Miscellaneous"
-                ]
-                    .map((category) => DropdownMenuItem(
-                          value: category,
-                          child: Text(category),
-                        ))
-                    .toList(),
-                onChanged: (value) =>
-                    setState(() => _selectedCategory = value!),
+                  "Bills", "Transportation", "Food", "Utilities",
+                  "Health", "Entertainment", "Miscellaneous"
+                ].map((category) => DropdownMenuItem(
+                      value: category,
+                      child: Text(category),
+                    )).toList(),
+                onChanged: (value) => setState(() => _selectedCategory = value!),
               ),
               TextFormField(
                 controller: _amountController,
                 decoration: const InputDecoration(labelText: 'Amount'),
                 keyboardType: TextInputType.number,
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                ],
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Enter amount';
-                  }
-                  return null;
-                },
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                validator: (value) => value!.isEmpty ? 'Enter amount' : null,
               ),
               const SizedBox(height: 20),
               ElevatedButton(
