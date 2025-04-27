@@ -1,36 +1,53 @@
 
-
-
 // import 'package:flutter/material.dart';
-// import 'package:flutter/services.dart';
 // import 'package:provider/provider.dart';
-// import '../models/expense_model.dart';
-// import '../providers/expense_provider.dart';
+// import '../../models/expense_model.dart';
+// import '../../providers/expense_provider.dart';
 
-// class ExpensesForm extends StatefulWidget {
-//   const ExpensesForm({super.key});
+// class EditExpense extends StatefulWidget {
+//   final Expense expense;
+//   const EditExpense({super.key, required this.expense});
 
 //   @override
-//   State<ExpensesForm> createState() => _ExpensesFormState();
+//   State<EditExpense> createState() => _EditExpenseState();
 // }
 
-// class _ExpensesFormState extends State<ExpensesForm> {
+// class _EditExpenseState extends State<EditExpense> {
 //   final _formKey = GlobalKey<FormState>();
-//   final _nameController = TextEditingController();
-//   final _descriptionController = TextEditingController();
-//   final _amountController = TextEditingController();
-//   String _selectedCategory = 'Bills';
+//   late TextEditingController _nameController;
+//   late TextEditingController _descriptionController;
+//   late TextEditingController _amountController;
+//   late String _selectedCategory;
 
-//   void _saveExpense() {
+//   @override
+//   void initState() {
+//     super.initState();
+//     _nameController = TextEditingController(text: widget.expense.name);
+//     _descriptionController = TextEditingController(text: widget.expense.description);
+//     _amountController = TextEditingController(text: widget.expense.amount.toString());
+//     _selectedCategory = widget.expense.category;
+//   }
+
+//   @override
+//   void dispose() {
+//     _nameController.dispose();
+//     _descriptionController.dispose();
+//     _amountController.dispose();
+//     super.dispose();
+//   }
+
+//   void _saveEditedExpense() {
 //     if (_formKey.currentState!.validate()) {
-//       final newExpense = Expense(
+//       final updatedExpense = Expense(
+//         id: widget.expense.id,
 //         name: _nameController.text,
 //         description: _descriptionController.text,
 //         category: _selectedCategory,
 //         amount: int.parse(_amountController.text),
 //       );
 
-//       Provider.of<ExpenseListProvider>(context, listen: false).addExpense(newExpense);
+//       Provider.of<ExpenseListProvider>(context, listen: false)
+//           .editExpense(widget.expense.id!, updatedExpense);
 
 //       Navigator.pop(context);
 //     }
@@ -39,7 +56,7 @@
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(
-//       appBar: AppBar(title: const Text('Add Expense')),
+//       appBar: AppBar(title: const Text('Edit Expense')),
 //       body: Padding(
 //         padding: const EdgeInsets.all(16.0),
 //         child: Form(
@@ -71,13 +88,12 @@
 //                 controller: _amountController,
 //                 decoration: const InputDecoration(labelText: 'Amount'),
 //                 keyboardType: TextInputType.number,
-//                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
 //                 validator: (value) => value!.isEmpty ? 'Enter amount' : null,
 //               ),
 //               const SizedBox(height: 20),
 //               ElevatedButton(
-//                 onPressed: _saveExpense,
-//                 child: const Text('Add expense'),
+//                 onPressed: _saveEditedExpense,
+//                 child: const Text('Update'),
 //               ),
 //             ],
 //           ),
@@ -87,40 +103,58 @@
 //   }
 // }
 
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import '../models/expense_model.dart';
-import '../providers/expense_provider.dart';
+import '../../models/expense_model.dart';
+import '../../providers/expense_provider.dart';
 
-class ExpensesForm extends StatefulWidget {
-  const ExpensesForm({super.key});
+class EditExpense extends StatefulWidget {
+  final Expense expense;
+  const EditExpense({super.key, required this.expense});
 
   @override
-  State<ExpensesForm> createState() => _ExpensesFormState();
+  State<EditExpense> createState() => _EditExpenseState();
 }
 
-class _ExpensesFormState extends State<ExpensesForm> {
+class _EditExpenseState extends State<EditExpense> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _descriptionController = TextEditingController();
-  final _amountController = TextEditingController();
-  String? _selectedCategory; // initially null
+  late TextEditingController _nameController;
+  late TextEditingController _descriptionController;
+  late TextEditingController _amountController;
+  late String _selectedCategory;
+  late bool _isPaid;
 
-  void _saveExpense() {
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.expense.name);
+    _descriptionController = TextEditingController(text: widget.expense.description);
+    _amountController = TextEditingController(text: widget.expense.amount.toString());
+    _selectedCategory = widget.expense.category;
+    _isPaid = widget.expense.isPaid ?? false;
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _descriptionController.dispose();
+    _amountController.dispose();
+    super.dispose();
+  }
+
+  void _saveEditedExpense() {
     if (_formKey.currentState!.validate()) {
-      final newExpense = Expense(
+      final updatedExpense = Expense(
+        id: widget.expense.id,
         name: _nameController.text,
         description: _descriptionController.text,
-        category: _selectedCategory!, // safe to unwrap due to validation
+        category: _selectedCategory,
         amount: int.parse(_amountController.text),
+        isPaid: _isPaid,
       );
 
-      Provider.of<ExpenseListProvider>(
-        context,
-        listen: false,
-      ).addExpense(newExpense);
+      Provider.of<ExpenseListProvider>(context, listen: false)
+          .editExpense(widget.expense.id!, updatedExpense);
 
       Navigator.pop(context);
     }
@@ -129,7 +163,7 @@ class _ExpensesFormState extends State<ExpensesForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Expense')),
+      appBar: AppBar(title: const Text('Edit Expense')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -148,34 +182,34 @@ class _ExpensesFormState extends State<ExpensesForm> {
               DropdownButtonFormField<String>(
                 value: _selectedCategory,
                 decoration: const InputDecoration(labelText: 'Select Category'),
-                hint: const Text(''),
                 items: [
-                  "Bills",
-                  "Transportation",
-                  "Food",
-                  "Utilities",
-                  "Health",
-                  "Entertainment",
-                  "Miscellaneous"
+                  "Bills", "Transportation", "Food", "Utilities",
+                  "Health", "Entertainment", "Miscellaneous"
                 ].map((category) => DropdownMenuItem(
                       value: category,
                       child: Text(category),
                     )).toList(),
-                onChanged: (value) => setState(() => _selectedCategory = value),
-                validator: (value) =>
-                    value == null ? '' : null,
+                onChanged: (value) => setState(() => _selectedCategory = value!),
               ),
               TextFormField(
                 controller: _amountController,
                 decoration: const InputDecoration(labelText: 'Amount'),
                 keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 validator: (value) => value!.isEmpty ? 'Enter amount' : null,
+              ),
+              CheckboxListTile(
+                title: const Text('Paid'),
+                value: _isPaid,
+                onChanged: (value) {
+                  setState(() {
+                    _isPaid = value ?? false;
+                  });
+                },
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: _saveExpense,
-                child: const Text('Add expense'),
+                onPressed: _saveEditedExpense,
+                child: const Text('Update'),
               ),
             ],
           ),
