@@ -10,17 +10,16 @@ class AccountsAuth {
     required String firstName,
     required String lastName,
   }) async {
-    // Validate email format
+
     if (!_isValidEmail(email)) {
       return "Please enter a valid email address";
     }
 
-    // Validate password strength
     if (!_isValidPassword(password)) {
       return "Password must be at least 6 characters and contain special characters";
     }
 
-    // Check if email already exists
+
     try {
       bool exists = await _api.emailExists(email);
       if (exists) {
